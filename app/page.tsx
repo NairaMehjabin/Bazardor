@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import Navbar from './components/Navbar';
 import HeroBanner from './components/HeroBanner';
+import Footer from './components/Footer';
 
 interface Product {
   id?: number | string;
@@ -77,86 +77,87 @@ export default function Home() {
   }).slice(0, 6);
 
   return (
-    <main className="min-h-screen bg-[#f2f6f3]">
-      {/* Navbar Component */}
-      <Navbar />
+    <main className="min-h-screen bg-[#f2f6f3] flex flex-col justify-between">
+      <div>
 
-      {/* Hero / Banner Component */}
-      <HeroBanner />
+        {/* Hero / Banner Component */}
+        <HeroBanner />
 
-      {/* Product Sections (Risers, Fallers, All Products) */}
-      {loading ? (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-          <div className="h-8 bg-gray-200 rounded-lg w-48 animate-pulse mb-6"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="bg-white border border-gray-100 rounded-2xl p-5 h-36 animate-pulse flex flex-col justify-between">
-                <div className="flex gap-4">
-                  <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
-                  <div className="space-y-2 flex-1">
-                    <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                    <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+        {/* Product Sections (Risers, Fallers, All Products) */}
+        {loading ? (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
+            <div className="h-8 bg-gray-200 rounded-lg w-48 animate-pulse mb-6"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3, 4, 5, 6].map((n) => (
+                <div key={n} className="bg-white border border-gray-100 rounded-2xl p-5 h-36 animate-pulse flex flex-col justify-between">
+                  <div className="flex gap-4">
+                    <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
+                    <div className="space-y-2 flex-1">
+                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-end pt-4">
+                    <div className="h-5 bg-gray-200 rounded w-1/3"></div>
+                    <div className="h-5 bg-gray-200 rounded w-1/4"></div>
                   </div>
                 </div>
-                <div className="flex justify-between items-end pt-4">
-                  <div className="h-5 bg-gray-200 rounded w-1/3"></div>
-                  <div className="h-5 bg-gray-200 rounded w-1/4"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      ) : (
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
-          {/* Section A: আজ দাম বেড়েছে ▲ */}
-          {risers.length > 0 && (
-            <section>
-              <div className="flex items-center gap-2 mb-6">
-                <span className="text-red-600 text-lg font-bold">▲</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">আজ দাম বেড়েছে</h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {risers.map((product, idx) => (
-                  <ProductCard key={product.slug || product.id || idx} product={product} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Section B: আজ দাম কমেছে ▼ */}
-          {fallers.length > 0 && (
-            <section>
-              <div className="flex items-center gap-2 mb-6">
-                <span className="text-emerald-600 text-lg font-bold">▼</span>
-                <h2 className="text-xl sm:text-2xl font-bold text-gray-900">আজ দাম কমেছে</h2>
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                {fallers.map((product, idx) => (
-                  <ProductCard key={product.slug || product.id || idx} product={product} />
-                ))}
-              </div>
-            </section>
-          )}
-
-          {/* Section C: সব পণ্য */}
-          <section id="সব-পণ্য" className="pt-6">
-            <div className="mb-6 flex justify-between items-end">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900">সব পণ্য</h2>
-                <p className="text-xs text-gray-500 mt-1">মোট {products.length}টি পণ্য দেখানো হচ্ছে</p>
-              </div>
-              <span className="text-[11px] text-gray-400 font-medium">
-                {fromApi ? '🟢 Live API Data' : '🟡 Fallback Mode'}
-              </span>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {products.map((product, idx) => (
-                <ProductCard key={product.slug || product.id || idx} product={product} />
               ))}
             </div>
-          </section>
-        </div>
-      )}
+          </div>
+        ) : (
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-12">
+            {/* Section A: আজ দাম বেড়েছে ▲ */}
+            {risers.length > 0 && (
+              <section>
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="text-red-600 text-lg font-bold">▲</span>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">আজ দাম বেড়েছে</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {risers.map((product, idx) => (
+                    <ProductCard key={product.slug || product.id || idx} product={product} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Section B: আজ দাম কমেছে ▼ */}
+            {fallers.length > 0 && (
+              <section>
+                <div className="flex items-center gap-2 mb-6">
+                  <span className="text-emerald-600 text-lg font-bold">▼</span>
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900">আজ দাম কমেছে</h2>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {fallers.map((product, idx) => (
+                    <ProductCard key={product.slug || product.id || idx} product={product} />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Section C: সব পণ্য */}
+            <section id="সব-পণ্য" className="pt-6">
+              <div className="mb-6 flex justify-between items-end">
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900">সব পণ্য</h2>
+                  <p className="text-xs text-gray-500 mt-1">মোট {products.length}টি পণ্য দেখানো হচ্ছে</p>
+                </div>
+                <span className="text-[11px] text-gray-400 font-medium">
+                  {fromApi ? '🟢 Live API Data' : '🟡 Fallback Mode'}
+                </span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                {products.map((product, idx) => (
+                  <ProductCard key={product.slug || product.id || idx} product={product} />
+                ))}
+              </div>
+            </section>
+          </div>
+        )}
+      </div>
+
     </main>
   );
 }

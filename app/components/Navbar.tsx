@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
@@ -31,7 +31,7 @@ const fallbackCategories: Category[] = [
   { id: '8', name: 'মসলা', slug: 'mosla', icon: '🌶️' },
 ];
 
-export default function Navbar() {
+function NavbarContent() {
   const pathname = usePathname();
   const [categories, setCategories] = useState<Category[]>(fallbackCategories);
   const [tickerItems, setTickerItems] = useState<TickerItem[]>([]);
@@ -121,7 +121,7 @@ export default function Navbar() {
         </div>
       </div>
 
-      {/* Middle Row: Category Navigation Links (Aligned with Logo on Left using max-w-7xl px container) */}
+      {/* Middle Row: Category Navigation Links */}
       <div className="border-t border-gray-100 bg-white w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <nav className="flex items-center justify-start gap-6 sm:gap-8 py-3 overflow-x-auto scrollbar-none">
@@ -172,5 +172,13 @@ export default function Navbar() {
         </div>
       </div>
     </header>
+  );
+}
+
+export default function Navbar() {
+  return (
+    <Suspense fallback={<div className="h-20 bg-white"></div>}>
+      <NavbarContent />
+    </Suspense>
   );
 }
