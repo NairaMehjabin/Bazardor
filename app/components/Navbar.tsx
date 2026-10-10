@@ -26,8 +26,8 @@ const fallbackCategories: Category[] = [
   { id: '3', name: 'তেল', slug: 'tel', icon: '🫙' },
   { id: '4', name: 'সবজি', slug: 'sobji', icon: '🥬' },
   { id: '5', name: 'মাছ', slug: 'mach', icon: '🐟' },
-  { id: '6', name: 'মাংস', slug: 'mangs', icon: '🍗' },
-  { id: '7', name: 'ডিম-দুধ', slug: 'dim-dudh', icon: '🥛' },
+  { id: '6', name: 'মাংস', slug: 'mangsho', icon: '🍗' },
+  { id: '7', name: 'ডিম-দুধ', slug: 'dim-dui', icon: '🥛' },
   { id: '8', name: 'মসলা', slug: 'mosla', icon: '🌶️' },
 ];
 

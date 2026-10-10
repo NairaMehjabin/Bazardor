@@ -129,13 +129,18 @@ function ProductDetailContent() {
   return (
     <div className="min-h-screen bg-[#f2f6f3] pb-12 pt-12">
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
-        {/* Breadcrumb */}
+      {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium">
           <Link href="/" className="hover:text-emerald-600 transition">
             হোম
           </Link>
           <span className="text-gray-400">›</span>
-          <span className="hover:text-emerald-600 cursor-pointer">{categoryName}</span>
+          <Link 
+            href={`/category/${product.category}`} 
+            className="hover:text-emerald-600 transition cursor-pointer"
+          >
+            {categoryName}
+          </Link>
           <span className="text-gray-400">›</span>
           <span className="text-gray-800 font-semibold">{nameStr}</span>
         </nav>
