@@ -1,9 +1,30 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 export default function HeroBanner() {
+  const [currentDateStr, setCurrentDateStr] = useState<string>('শনিবার, ১০ অক্টোবর, ২০২৬');
+
+  useEffect(() => {
+    // লাইভ ডাইনামিক বাংলা তারিখ সেট করার লজিক
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: 'Asia/Dhaka',
+    };
+
+    try {
+      const bnDate = new Intl.DateTimeFormat('bn-BD', options).format(new Date());
+      setCurrentDateStr(bnDate);
+    } catch (e) {
+      // ফেইল করলে ফলব্যাক ডেট
+      setCurrentDateStr('শনিবার, ১০ অক্টোবর, ২০২৬');
+    }
+  }, []);
+
   const scrollToProducts = () => {
     const section = document.getElementById('সব-পণ্য');
     if (section) {
@@ -19,7 +40,7 @@ export default function HeroBanner() {
         <div className="lg:col-span-7 space-y-6">
           <div className="inline-flex items-center gap-2 bg-[#e2ede6] text-emerald-800 px-4 py-1.5 rounded-full text-sm font-semibold">
             <span>📅</span>
-            <span>মঙ্গলবার, ৬ অক্টোবর, ২০২৬</span>
+            <span>{currentDateStr}</span>
           </div>
 
           <h1 
@@ -30,7 +51,7 @@ export default function HeroBanner() {
           </h1>
 
           <p className="text-gray-600 text-base sm:text-lg max-w-xl leading-relaxed">
-            চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার দাম — বাজারভিত্তিক বিস্তারিত, গড়, সর্বনিম্ন-সর্বাধিক এবং দামের পরিবর্তন এক জায়গায়।
+            চাল, ডাল, তেল, সবজি, মাছ, মাংস, ডিম ও মসলার দাম — বাজারভিত্তিক বিস্তারিত, গড়, সর্বনিম্ন-সর্বাধিক এবং দামের পরিবর্তন এক জায়গায়।
           </p>
 
           <div>
