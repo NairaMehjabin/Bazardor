@@ -8,6 +8,7 @@ const db = client.db("bazardor");
 export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   baseURL: process.env.BETTER_AUTH_URL || "https://bazardor-navy.vercel.app",
+  trustedOrigins: ["https://bazardor-navy.vercel.app"], // <-- Add this line
   database: mongodbAdapter(db, {
     client,
   }),
