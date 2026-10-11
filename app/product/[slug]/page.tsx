@@ -1,8 +1,10 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
+import { useSession } from '@/lib/auth-client';
+import toast from 'react-hot-toast';
 
 interface MarketData {
   market: string;
@@ -32,7 +34,7 @@ interface Product {
   markets?: MarketData[];
 }
 
-// বাংলা সংখ্যায় কনভার্ট করার হেল্পার
+// বাংলা সংখ্যায় কনভার্ট করার হেল্পার
 const toBn = (num: number | string) => {
   const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
   return String(num).replace(/\d/g, (d) => bnDigits[parseInt(d)]);
@@ -41,24 +43,35 @@ const toBn = (num: number | string) => {
 function ProductDetailContent() {
   const params = useParams();
   const router = useRouter();
-  const slug = params?.slug;
+  const slug = params?.slug as string;
 
+  const { data: session, isPending: sessionLoading } = useSession();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const hasToastedRef = useRef(false);
 
+  // 1. Protected Route Check using BetterAuth
   useEffect(() => {
-    const userLoggedIn = localStorage.getItem('bazardor_user') || 'true';
-    if (!userLoggedIn) {
+    if (!sessionLoading && !session) {
+      if (!hasToastedRef.current) {
+        hasToastedRef.current = true;
+        toast.error('বিস্তারিত দাম দেখতে আগে সাইন ইন করুন', { id: 'auth-protect-toast' });
+      }
       router.push('/signin');
-      return;
     }
+  }, [session, sessionLoading, router]);
+
+  // 2. Fetch Product Data
+  useEffect(() => {
+    if (!slug || !session) return;
+    setLoading(true);
 
     fetch('https://openapi.programming-hero.com/api/bazardor/products')
       .then((res) => res.json())
       .then((data) => {
         const list = data?.data || data;
         if (Array.isArray(list)) {
-          const found = list.find((item: Product) => item.slug === slug);
+          const found = list.find((item: Product) => item.slug === slug || item.id == slug);
           if (found) {
             setProduct(found);
           }
@@ -69,9 +82,10 @@ function ProductDetailContent() {
         console.error('Failed to fetch product details:', err);
         setLoading(false);
       });
-  }, [slug, router]);
+  }, [slug, session]);
 
-  if (loading) {
+  // Loading state while checking session or fetching data
+  if (sessionLoading || loading) {
     return (
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 animate-pulse space-y-6 w-full bg-[#f2f6f3] min-h-screen">
         <div className="h-5 bg-gray-200 rounded w-1/5"></div>
@@ -82,13 +96,21 @@ function ProductDetailContent() {
     );
   }
 
+  // Prevent flash before redirect if not authenticated
+  if (!session) {
+    return null;
+  }
+
+  // Empty State if product not found
   if (!product) {
     return (
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center bg-[#f2f6f3] min-h-screen">
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">পণ্যটি খুঁজে পাওয়া যায়নি</h2>
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center bg-[#f2f6f3] min-h-screen flex flex-col items-center justify-center">
+        <div className="text-6xl mb-4">🔍</div>
+        <h2 className="text-2xl font-bold text-gray-800 mb-2">পণ্যটি খুঁজে পাওয়া যায়নি</h2>
+        <p className="text-xs sm:text-sm text-gray-500 mb-6">অনুরোধকৃত পণ্যটি আমাদের সিস্টেমে খুঁজে পাওয়া যায়নি।</p>
         <Link
           href="/"
-          className="bg-emerald-600 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-emerald-700 transition"
+          className="bg-emerald-600 text-white px-6 py-2.5 rounded-xl text-xs font-bold hover:bg-emerald-700 transition"
         >
           হোম পেজে ফিরে যান
         </Link>
@@ -113,7 +135,7 @@ function ProductDetailContent() {
   }
 
   const nameStr = product.nameBn || product.name || 'পণ্য';
-  const categoryName = product.categoryNameBn || product.category || 'চাল';
+  const categoryName = product.categoryNameBn || product.category || 'সাধারণ';
   const unitStr =
     product.unit === 'kg'
       ? 'প্রতি কেজি'
@@ -129,7 +151,7 @@ function ProductDetailContent() {
   return (
     <div className="min-h-screen bg-[#f2f6f3] pb-12 pt-12">
       <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6 w-full space-y-6">
-      {/* Breadcrumb */}
+        {/* Breadcrumb */}
         <nav className="flex items-center gap-2 text-xs text-gray-500 font-medium">
           <Link href="/" className="hover:text-emerald-600 transition">
             হোম
@@ -159,9 +181,9 @@ function ProductDetailContent() {
                 {unitStr} · {categoryName}
               </p>
               <p className="text-xs text-gray-600 mt-3 font-semibold">
-                গতকালের তুলনায় আজ দাম{' '}
+                গতকালকের তুলনায় আজ দাম{' '}
                 <span className="font-bold text-gray-900">
-                  {changeDir === 'up' ? 'বেড়েছে' : changeDir === 'down' ? 'কমেছে' : 'একই আছে'}
+                  {changeDir === 'up' ? 'বেড়েছে' : changeDir === 'down' ? 'কমেছে' : 'একই আছে'}
                 </span>{' '}
                 • {toBn(priceDiff)} টাকা
               </p>
@@ -195,45 +217,45 @@ function ProductDetailContent() {
         <div className="bg-white border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm space-y-8">
           
           {/* Section 1: দামের সারসংক্ষেপ */}
-        <div className="space-y-4">
-          <h2 className="text-base sm:text-lg font-bold text-gray-900">দামের সারসংক্ষেপ</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            
-            {/* Minimum Price Card */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm">
-              <span className="text-[11px] text-gray-500 font-medium block">সর্বনিম্ন দাম</span>
-              <div className="text-xl sm:text-2xl font-black text-emerald-600 mt-1">
-                {toBn(minPrice)} <span className="text-sm font-bold text-emerald-600">টাকা</span>
+          <div className="space-y-4">
+            <h2 className="text-base sm:text-lg font-bold text-gray-900">দামের সারসংক্ষেপ</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              
+              {/* Minimum Price Card */}
+              <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm">
+                <span className="text-[11px] text-gray-500 font-medium block">সর্বনিম্ন দাম</span>
+                <div className="text-xl sm:text-2xl font-black text-emerald-600 mt-1">
+                  {toBn(minPrice)} <span className="text-sm font-bold text-emerald-600">টাকা</span>
+                </div>
+                <span className="text-[11px] text-gray-400 font-medium mt-1.5 block">
+                  সবচেয়ে কম দামের বাজার
+                </span>
               </div>
-              <span className="text-[11px] text-gray-400 font-medium mt-1.5 block">
-                সবচেয়ে কম দামের বাজার
-              </span>
-            </div>
 
-            {/* Maximum Price Card */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm">
-              <span className="text-[11px] text-gray-500 font-medium block">সর্বাধিক দাম</span>
-              <div className="text-xl sm:text-2xl font-black text-red-600 mt-1">
-                {toBn(maxPrice)} <span className="text-sm font-bold text-red-600">টাকা</span>
+              {/* Maximum Price Card */}
+              <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm">
+                <span className="text-[11px] text-gray-500 font-medium block">সর্বাধিক দাম</span>
+                <div className="text-xl sm:text-2xl font-black text-red-600 mt-1">
+                  {toBn(maxPrice)} <span className="text-sm font-bold text-red-600">টাকা</span>
+                </div>
+                <span className="text-[11px] text-gray-400 font-medium mt-1.5 block">
+                  সবচেয়ে বেশি দামের বাজার
+                </span>
               </div>
-              <span className="text-[11px] text-gray-400 font-medium mt-1.5 block">
-                সবচেয়ে বেশি দামের বাজার
-              </span>
-            </div>
 
-            {/* Average Price Card */}
-            <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm">
-              <span className="text-[11px] text-gray-500 font-medium block">গড় দাম</span>
-              <div className="text-xl sm:text-2xl font-black text-emerald-700 mt-1">
-                {toBn(avgPriceSum)} <span className="text-sm font-bold text-emerald-700">টাকা</span>
+              {/* Average Price Card */}
+              <div className="bg-white border border-gray-200 rounded-xl p-4 sm:p-5 shadow-sm">
+                <span className="text-[11px] text-gray-500 font-medium block">গড় দাম</span>
+                <div className="text-xl sm:text-2xl font-black text-emerald-700 mt-1">
+                  {toBn(avgPriceSum)} <span className="text-sm font-bold text-emerald-700">টাকা</span>
+                </div>
+                <span className="text-[11px] text-gray-400 font-medium mt-1.5 block">
+                  {unitStr}-এর হিসাবে
+                </span>
               </div>
-              <span className="text-[11px] text-gray-400 font-medium mt-1.5 block">
-                {unitStr}-এর হিসাবে
-              </span>
-            </div>
 
+            </div>
           </div>
-        </div>
 
           {/* Section 2: বাজারভিত্তিক আজকের দাম Table */}
           <div className="space-y-4">
@@ -283,7 +305,18 @@ function ProductDetailContent() {
 
 export default function ProductDetailPage() {
   return (
-    <Suspense fallback={<div className="p-10 text-center bg-[#f2f6f3] min-h-screen">লোড হচ্ছে...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#f2f6f3] flex flex-col items-center justify-center py-20 px-4">
+          <div className="relative flex flex-col items-center space-y-4">
+            <div className="w-14 h-14 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+            <p className="text-sm font-bold text-gray-600 tracking-wide animate-pulse">
+              লোড হচ্ছে...
+            </p>
+          </div>
+        </div>
+      }
+    >
       <ProductDetailContent />
     </Suspense>
   );

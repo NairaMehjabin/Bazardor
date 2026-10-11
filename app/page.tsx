@@ -79,27 +79,34 @@ export default function Home() {
   return (
     <main className="min-h-screen bg-[#f2f6f3] flex flex-col justify-between">
       <div>
-
         {/* Hero / Banner Component */}
         <HeroBanner />
 
         {/* Product Sections (Risers, Fallers, All Products) */}
         {loading ? (
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-6">
-            <div className="h-8 bg-gray-200 rounded-lg w-48 animate-pulse mb-6"></div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 flex flex-col items-center justify-center min-h-[450px]">
+            {/* Modern Central Spinner Loader */}
+            <div className="relative flex flex-col items-center space-y-4">
+              <div className="w-14 h-14 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+              <p className="text-sm font-bold text-gray-600 tracking-wide animate-pulse">
+                বাজারের তথ্য লোড হচ্ছে...
+              </p>
+            </div>
+
+            {/* Skeleton Grid Preview */}
+            <div className="w-full max-w-7xl mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 opacity-60">
               {[1, 2, 3, 4, 5, 6].map((n) => (
                 <div key={n} className="bg-white border border-gray-100 rounded-2xl p-5 h-36 animate-pulse flex flex-col justify-between">
                   <div className="flex gap-4">
-                    <div className="w-12 h-12 bg-gray-200 rounded-xl"></div>
+                    <div className="w-12 h-12 bg-gray-100 rounded-xl"></div>
                     <div className="space-y-2 flex-1">
-                      <div className="h-4 bg-gray-200 rounded w-3/4"></div>
-                      <div className="h-3 bg-gray-200 rounded w-1/2"></div>
+                      <div className="h-4 bg-gray-100 rounded w-3/4"></div>
+                      <div className="h-3 bg-gray-100 rounded w-1/2"></div>
                     </div>
                   </div>
                   <div className="flex justify-between items-end pt-4">
-                    <div className="h-5 bg-gray-200 rounded w-1/3"></div>
-                    <div className="h-5 bg-gray-200 rounded w-1/4"></div>
+                    <div className="h-5 bg-gray-100 rounded w-1/3"></div>
+                    <div className="h-5 bg-gray-100 rounded w-1/4"></div>
                   </div>
                 </div>
               ))}
@@ -157,7 +164,6 @@ export default function Home() {
           </div>
         )}
       </div>
-
     </main>
   );
 }
@@ -171,7 +177,6 @@ function ProductCard({ product }: { product: Product }) {
   const pctNum = Math.abs(changeObj.pct || 0);
   const isUp = changeObj.dir === 'up';
   const isDown = changeObj.dir === 'down';
-  const isFlat = changeObj.dir === 'flat' || pctNum === 0;
 
   let badgeText = `— ${pctNum.toFixed(1)}%`;
   let badgeColor = 'text-gray-500 bg-gray-100';

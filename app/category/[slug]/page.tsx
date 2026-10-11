@@ -28,7 +28,7 @@ interface Category {
   icon: string;
 }
 
-// বাংলা সংখ্যায় কনভার্ট করার হেল্পার
+// বাংলা সংখ্যায় কনভার্ট করার হেল্পার
 const toBn = (num: number | string) => {
   const bnDigits = ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'];
   return String(num).replace(/\d/g, (d) => bnDigits[parseInt(d)]);
@@ -90,19 +90,16 @@ function CategoryPageContent() {
 
   const sortedProducts = getSortedProducts();
 
-  // Loading State - Skeleton Loader
+  // Loading State - Centered Modern Spinner Loader
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#f2f6f3] py-8">
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-          <div className="h-16 bg-white/60 animate-pulse rounded-2xl w-1/3"></div>
-          <div className="h-12 bg-white/60 animate-pulse rounded-xl w-full"></div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="bg-white rounded-2xl p-5 h-36 animate-pulse"></div>
-            ))}
-          </div>
-        </main>
+      <div className="min-h-screen bg-[#f2f6f3] flex flex-col items-center justify-center py-20 px-4">
+        <div className="relative flex flex-col items-center space-y-4">
+          <div className="w-14 h-14 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+          <p className="text-sm font-bold text-gray-600 tracking-wide animate-pulse">
+            ক্যাটাগরির তথ্য লোড হচ্ছে...
+          </p>
+        </div>
       </div>
     );
   }
@@ -112,7 +109,7 @@ function CategoryPageContent() {
     return (
       <div className="min-h-screen bg-[#f2f6f3] py-20 text-center">
         <div className="text-6xl mb-4">🔍</div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">ক্যাটাগরি বা পণ্য পাওয়া যায়নি</h2>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">ক্যাটাগরি বা পণ্য পাওয়া যায়নি</h2>
         <p className="text-sm text-gray-500 mb-6">আপনার অনুরোধকৃত ক্যাটাগরিতে বর্তমানে কোনো পণ্য উপলব্ধ নেই।</p>
         <Link
           href="/"
@@ -130,8 +127,7 @@ function CategoryPageContent() {
   return (
     <div className="min-h-screen bg-[#f2f6f3] pb-16">
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6 pt-12">
-        
-        {/* Category Header (No White Container Box, Direct Text & Icon on Green BG) */}
+        {/* Category Header */}
         <div className="flex items-center gap-4 py-2">
           <div className="w-14 h-14 rounded-2xl bg-white shadow-sm flex items-center justify-center text-3xl border border-gray-100 shrink-0">
             {categoryIcon}
@@ -186,7 +182,6 @@ function CategoryPageContent() {
             </Link>
           </div>
         )}
-
       </main>
     </div>
   );
@@ -253,7 +248,18 @@ function ProductCard({ product }: { product: Product }) {
 
 export default function CategoryPage() {
   return (
-    <Suspense fallback={<div className="p-10 text-center bg-[#f2f6f3] min-h-screen">লোড হচ্ছে...</div>}>
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-[#f2f6f3] flex flex-col items-center justify-center py-20 px-4">
+          <div className="relative flex flex-col items-center space-y-4">
+            <div className="w-14 h-14 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
+            <p className="text-sm font-bold text-gray-600 tracking-wide animate-pulse">
+              লোড হচ্ছে...
+            </p>
+          </div>
+        </div>
+      }
+    >
       <CategoryPageContent />
     </Suspense>
   );
