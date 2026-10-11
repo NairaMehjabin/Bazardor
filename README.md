@@ -1,36 +1,30 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# বাজার দর (BazarDor)
 
-## Getting Started
+A modern, responsive real-time commodity price tracking web application built for monitoring essential market prices, price fluctuations, and bazar-wise comparisons across Bangladesh.
 
-First, run the development server:
+- **Live Demo:** [https://bazardor-navy.vercel.app](https://bazardor-navy.vercel.app)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Short Description
+**বাজার দর (BazarDor)** provides citizens and consumers with up-to-date insights into daily market prices of essential goods (such as rice, lentils, vegetables, fish, and meat). It features real-time price change badges, category filtering, bazar-wise breakdowns, and secure user authentication.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Technologies Used
+- **Frontend & Routing:** Next.js (App Router), React
+- **Styling & UI:** Tailwind CSS, Lucide Icons, Custom CSS Animations
+- **Language:** TypeScript / JavaScript
+- **Authentication:** Better Auth (Email/Password, Google OAuth, GitHub OAuth)
+- **Database:** MongoDB Atlas / Neon DB
+- **Notifications:** React Hot Toast
 
-## Learn More
+---
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## ✨ Key Features
+1. **Live Price Ticker & Market Insights:** Real-time scrolling ticker displaying commodity prices alongside percentage change badges (▲ risers and ▼ fallers).
+2. **Multi-Provider Authentication:** Secure login and registration supporting Email/Password as well as social logins (Google & GitHub) powered by Better Auth.
+3. **Protected Product Details & Bazar Breakdown:** Detailed market-wise price comparisons (minimum, maximum, and average prices across various markets) restricted to authenticated users.
+4. **Category Filtering & Bengali Sorting:** Comprehensive category browsing with custom sorting controls (default, low-to-high, high-to-low) supporting accurate Bengali numerals.
+5. **Profile Management & Information Update (C3):** Dedicated user profile views and split-route update workflows for modifying user account information.
+6. **Fully Responsive Design & Custom 404:** Optimized layout across mobile, tablet, and desktop viewports, accompanied by a custom non-scrollable 404 error handler.

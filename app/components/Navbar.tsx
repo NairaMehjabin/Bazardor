@@ -35,12 +35,14 @@ const fallbackCategories: Category[] = [
 
 function NavbarContent() {
   const pathname = usePathname();
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const [categories, setCategories] = useState<Category[]>(fallbackCategories);
   const [tickerItems, setTickerItems] = useState<TickerItem[]>([]);
-  const [currentDateStr, setCurrentDateStr] = useState<string>('মঙ্গলবার, ৬ অক্টোবর, ২০২৬');
+  const [currentDateStr, setCurrentDateStr] = useState<string>('রবিবার, ১১ অক্টোবর, ২০২৬');
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const mobileMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const options: Intl.DateTimeFormatOptions = {
@@ -55,12 +57,15 @@ function NavbarContent() {
       const bnDate = new Intl.DateTimeFormat('bn-BD', options).format(new Date());
       setCurrentDateStr(bnDate);
     } catch (e) {
-      setCurrentDateStr('মঙ্গলবার, ৬ অক্টোবর, ২০২৬');
+      setCurrentDateStr('রবিবার, ১১ অক্টোবর, ২০২৬');
     }
 
     const handleClickOutside = (event: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setDropdownOpen(false);
+      }
+      if (mobileMenuRef.current && !mobileMenuRef.current.contains(event.target as Node)) {
+        setMobileMenuOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -95,7 +100,7 @@ function NavbarContent() {
         },
         onError: () => {
           toast.error('সাইন আউট করতে সমস্যা হয়েছে');
-        }
+        },
       },
     });
   };
@@ -106,42 +111,40 @@ function NavbarContent() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
         {/* Left: Logo & Bengali Date */}
         <Link href="/" className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-emerald-700 rounded-xl flex items-center justify-center shadow-md">
+          <div className="w-11 h-11 sm:w-12 sm:h-12 bg-emerald-700 rounded-xl flex items-center justify-center shadow-md shrink-0">
             <Image
               src="/assets/logo-icon.png"
               alt="বাজার দর লোগো"
-              width={28}
-              height={28}
+              width={26}
+              height={26}
               className="object-contain"
             />
           </div>
           <div>
             <span 
-              className="text-[20px] font-extrabold text-gray-900 tracking-tight font-sans block" 
+              className="text-lg sm:text-[20px] font-extrabold text-gray-900 tracking-tight font-sans block leading-tight" 
               style={{ fontWeight: 900 }}
             >
               বাজার দর
             </span>
-            <p className="text-xs text-gray-400 font-medium">{currentDateStr}</p>
+            <p className="text-[11px] sm:text-xs text-gray-400 font-medium">{currentDateStr}</p>
           </div>
         </Link>
 
-        {/* Right: Auth / Profile Dropdown */}
-        <div className="flex items-center gap-4 relative" ref={dropdownRef}>
-          {isPending ? (
-            <div className="text-xs text-gray-400">লোড হচ্ছে...</div>
-          ) : session?.user ? (
-            <div>
+        {/* Right: Auth & Mobile Hamburger Toggle */}
+        <div className="flex items-center gap-3 relative" ref={dropdownRef}>
+          {session?.user ? (
+            <div className="hidden sm:block">
               {/* Profile Trigger Button */}
               <div 
                 onClick={() => setDropdownOpen(!dropdownOpen)}
-                className="flex items-center gap-2.5 bg-gray-50 border border-gray-100 px-3.5 py-1.5 rounded-full cursor-pointer hover:bg-gray-100 transition shadow-sm select-none"
+                className="flex items-center gap-2 bg-gray-50 border border-gray-100 px-3.5 py-1.5 rounded-full cursor-pointer hover:bg-gray-100 transition shadow-sm select-none"
               >
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-300 relative">
+                <div className="w-8 h-8 rounded-xl overflow-hidden bg-gray-200 relative shrink-0 border border-gray-200">
                   {session.user.image ? (
                     <Image src={session.user.image} alt={session.user.name || 'User'} fill className="object-cover" />
                   ) : (
-                    <span className="flex items-center justify-center h-full text-sm font-bold text-gray-700">
+                    <span className="flex items-center justify-center h-full text-xs font-bold text-gray-700">
                       {session.user.name ? session.user.name.charAt(0) : 'U'}
                     </span>
                   )}
@@ -191,7 +194,7 @@ function NavbarContent() {
               )}
             </div>
           ) : (
-            <div className="flex items-center gap-4">
+            <div className="hidden sm:flex items-center gap-4">
               <Link
                 href="/signin"
                 className="text-sm font-bold text-gray-800 hover:text-emerald-600 transition"
@@ -206,22 +209,86 @@ function NavbarContent() {
               </Link>
             </div>
           )}
+
+          {/* Mobile Hamburger Button */}
+          <div className="sm:hidden" ref={mobileMenuRef}>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              className="w-10 h-10 rounded-xl bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-700 hover:bg-gray-100 transition cursor-pointer"
+              aria-label="Toggle Menu"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                {mobileMenuOpen ? (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M6 18L18 6M6 6l12 12" />
+                ) : (
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2.5" d="M4 6h16M4 12h16M4 18h16" />
+                )}
+              </svg>
+            </button>
+
+            {/* Mobile Dropdown Drawer */}
+            {mobileMenuOpen && (
+              <div className="absolute right-0 mt-3 w-64 bg-white rounded-2xl shadow-xl border border-gray-100 py-4 px-4 z-50 animate-in fade-in slide-in-from-top-2 duration-200 space-y-3">
+                {session?.user ? (
+                  <div className="space-y-3">
+                    <div className="pb-3 border-b border-gray-100">
+                      <p className="text-sm font-bold text-gray-900">{session.user.name}</p>
+                      <p className="text-xs text-gray-500 truncate">{session.user.email}</p>
+                    </div>
+                    <Link
+                      href="/profile"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-gray-700 hover:bg-emerald-50 hover:text-emerald-700 rounded-xl transition"
+                    >
+                      👤 আমার প্রোফাইল
+                    </Link>
+                    <button
+                      onClick={() => {
+                        setMobileMenuOpen(false);
+                        handleSignOut();
+                      }}
+                      className="w-full text-left flex items-center gap-2 px-3 py-2 text-xs font-bold text-red-600 hover:bg-red-50 rounded-xl transition"
+                    >
+                      🚪 সাইন আউট
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-2">
+                    <Link
+                      href="/signin"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-center py-2.5 rounded-xl text-xs font-bold text-gray-800 bg-gray-50 hover:bg-gray-100 transition"
+                    >
+                      সাইন ইন
+                    </Link>
+                    <Link
+                      href="/signup"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block text-center py-2.5 rounded-xl text-xs font-bold text-white bg-[#009b4c] hover:bg-[#00813f] transition shadow-sm"
+                    >
+                      সাইন আপ
+                    </Link>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
 
       {/* Middle Row: Category Navigation Links */}
       <div className="border-t border-gray-100 bg-white w-full">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <nav className="flex items-center justify-start gap-6 sm:gap-8 py-3 overflow-x-auto scrollbar-none">
+          <nav className="flex items-center justify-start gap-4 sm:gap-8 py-3 overflow-x-auto scrollbar-none">
             {categories.map((cat) => {
               const isActive = pathname === `/category/${cat.slug}`;
               return (
                 <Link
                   key={cat.id || cat.slug}
                   href={`/category/${cat.slug}`}
-                  className={`flex items-center gap-2 px-3 py-1 rounded-full text-[12px] font-semibold transition whitespace-nowrap ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold transition whitespace-nowrap ${
                     isActive
-                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60'
+                      ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/60 shadow-sm'
                       : 'text-gray-700 hover:text-emerald-600 hover:bg-gray-50'
                   }`}
                 >
@@ -240,7 +307,7 @@ function NavbarContent() {
           className="inline-flex gap-8 items-center px-4"
           style={{
             display: 'inline-flex',
-            animation: 'marquee 20s linear infinite',
+            animation: 'marquee 25s linear infinite',
             willChange: 'transform',
           }}
         >
