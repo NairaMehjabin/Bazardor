@@ -58,6 +58,9 @@ export default function SignUpPage() {
   const handleSocialSignUp = async (provider: 'google' | 'github') => {
     setError('');
     setLoading(true);
+    const providerName = provider === 'google' ? 'Google' : 'GitHub';
+    toast.success(`${providerName} দিয়ে সাইন আপ শুরু হচ্ছে...`, { id: 'social-signup' });
+
     try {
       await signIn.social({
         provider,
