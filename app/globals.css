@@ -1,5 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300;400;500;600;700;800&display=swap');
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Anek+Bangla:wght@300;400;500;600;700&display=swap');
 
 :root {
   --background: #ffffff;
@@ -7,16 +7,25 @@
 }
 
 body {
+  font-family: 'Anek Bangla', sans-serif;
   background: var(--background);
   color: var(--foreground);
-  font-family: 'Anek Bangla', Arial, Helvetica, sans-serif;
 }
 
 @keyframes marquee {
   0% {
-    transform: translateX(0);
+    transform: translateX(0%);
   }
   100% {
     transform: translateX(-50%);
   }
+}
+
+.animate-marquee {
+  display: inline-flex;
+  animation: marquee 20s linear infinite;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
 }
