@@ -12,7 +12,7 @@ export default function UpdateProfilePage() {
   const [name, setName] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Protected route check
+  // Protect route
   useEffect(() => {
     if (!isPending && !session) {
       toast.error('প্রবেশ করতে প্রথমে সাইন ইন করুন');
@@ -62,13 +62,8 @@ export default function UpdateProfilePage() {
 
   if (isPending) {
     return (
-      <div className="min-h-screen bg-[#f2f6f3] flex flex-col items-center justify-center py-20 px-4">
-        <div className="relative flex flex-col items-center space-y-4">
-          <div className="w-14 h-14 border-4 border-emerald-200 border-t-emerald-600 rounded-full animate-spin"></div>
-          <p className="text-sm font-bold text-gray-600 tracking-wide animate-pulse">
-            যাচাই করা হচ্ছে...
-          </p>
-        </div>
+      <div className="min-h-[70vh] flex items-center justify-center bg-[#f2f6f3]">
+        <p className="text-sm font-semibold text-gray-500">যাচাই করা হচ্ছে...</p>
       </div>
     );
   }
@@ -78,38 +73,38 @@ export default function UpdateProfilePage() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-160px)] bg-[#f4f7f5] py-12 px-4 sm:px-6">
-      <div className="max-w-xl mx-auto space-y-6">
+    <div className="min-h-[calc(100vh-160px)] bg-[#f2f6f3] py-10 px-4 sm:px-6">
+      <div className="max-w-2xl mx-auto space-y-6">
         
-        {/* Back Link */}
+        {/* Back Button */}
         <div>
           <Link href="/profile" className="text-xs font-bold text-emerald-600 hover:underline inline-flex items-center gap-1">
             <span>←</span> প্রোফাইলে ফিরে যান
           </Link>
         </div>
 
-        {/* Header */}
+        {/* Header Section */}
         <div>
-          <h1 className="text-xl sm:text-2xl font-black text-gray-900 tracking-tight">
-            তথ্য আপডেট করুন
+          <h1 className="text-2xl font-bold text-gray-900 tracking-tight">
+            তথ্য আপডেট
           </h1>
-          <p className="text-xs text-gray-500 font-medium mt-1">
-            আপনার প্রোফাইলের নাম পরিবর্তন করুন।
+          <p className="text-xs text-gray-400 font-medium mt-1">
+            আপনার নাম পরিবর্তন করুন।
           </p>
         </div>
 
-        {/* Form Card */}
-        <div className="bg-white border border-gray-200/80 rounded-2xl p-6 sm:p-8 shadow-sm space-y-5">
+        {/* Form Card matching Figma UI */}
+        <div className="bg-white border border-gray-100 rounded-2xl p-6 sm:p-8 shadow-sm space-y-5">
           <form onSubmit={handleUpdate} className="space-y-4">
             <div>
-              <label className="block text-xs font-bold text-gray-700 mb-1.5">
+              <label className="block text-xs font-bold text-gray-700 mb-2">
                 নাম
               </label>
               <input
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                className="w-full bg-white border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 outline-none focus:border-emerald-600 focus:ring-2 focus:ring-emerald-500/10 transition"
+                className="w-full bg-[#f9fafb] border border-gray-200 rounded-xl px-4 py-3 text-xs sm:text-sm text-gray-800 outline-none focus:border-emerald-600 focus:bg-white transition"
                 placeholder="আপনার নাম লিখুন"
               />
             </div>
@@ -117,9 +112,9 @@ export default function UpdateProfilePage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#009b4c] hover:bg-[#00813f] text-white font-bold py-3.5 rounded-xl shadow-md transition text-xs sm:text-sm tracking-wide cursor-pointer disabled:opacity-70"
+              className="w-full bg-[#009b4c] hover:bg-[#00813f] text-white font-bold py-3.5 rounded-xl shadow-sm transition text-xs sm:text-sm tracking-wide cursor-pointer disabled:opacity-70 mt-2"
             >
-              {loading ? 'আপডেট হচ্ছে...' : 'আপডেট ইনফরমেশন'}
+              {loading ? 'আপডেট হচ্ছে...' : 'আপডেট'}
             </button>
           </form>
         </div>
